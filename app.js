@@ -29,9 +29,11 @@ runSimulation();
 
 function wireEvents() {
   for (const input of Object.values(seatInputs)) {
+    input.addEventListener("input", handleSeatStrategyChange);
     input.addEventListener("change", handleSeatStrategyChange);
   }
 
+  strategyInfoSelect.addEventListener("input", renderStrategyInfo);
   strategyInfoSelect.addEventListener("change", renderStrategyInfo);
   runButton.addEventListener("click", () => {
     runSimulation();
