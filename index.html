@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Win As Much As You Can Simulator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">Negotiation Game Simulator</p>
+        <h1>Win As Much As You Can</h1>
+        <p class="lede">
+          Simulate the 10-round payoff game, compare seat strategies, and run
+          repeated trials whenever any strategy introduces randomness.
+        </p>
+      </section>
+
+      <section class="panel controls-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="section-kicker">Setup</p>
+            <h2>Choose a strategy for each seat</h2>
+          </div>
+          <button id="run-simulation" class="run-button" type="button">
+            Run Simulation
+          </button>
+        </div>
+
+        <div class="controls-grid">
+          <label class="control seat-a">
+            <span>Seat A (Primary)</span>
+            <input
+              id="seat-A"
+              list="strategy-options"
+              autocomplete="off"
+              value="always_x"
+            />
+          </label>
+          <label class="control seat-divider">
+            <span>Seat B</span>
+            <input
+              id="seat-B"
+              list="strategy-options"
+              autocomplete="off"
+              value="always_y"
+            />
+          </label>
+          <label class="control">
+            <span>Seat C</span>
+            <input
+              id="seat-C"
+              list="strategy-options"
+              autocomplete="off"
+              value="random"
+            />
+          </label>
+          <label class="control">
+            <span>Seat D</span>
+            <input
+              id="seat-D"
+              list="strategy-options"
+              autocomplete="off"
+              value="always_y"
+            />
+          </label>
+          <label id="trials-control" class="control trials-control">
+            <span>Trials</span>
+            <input
+              id="trials"
+              type="number"
+              min="1"
+              step="1"
+              value="1000"
+              inputmode="numeric"
+            />
+            <small>Used when any selected strategy is stochastic.</small>
+          </label>
+        </div>
+
+        <datalist id="strategy-options"></datalist>
+        <p id="validation-message" class="validation-message" aria-live="polite"></p>
+      </section>
+
+      <section class="panel results-panel">
+        <div class="panel-heading compact">
+          <div>
+            <p class="section-kicker">Results</p>
+            <h2>Round-by-round simulation</h2>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th>Round</th>
+                <th class="seat-a-divider">Seat A</th>
+                <th>Seat B</th>
+                <th>Seat C</th>
+                <th>Seat D</th>
+              </tr>
+            </thead>
+            <tbody id="results-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="stats-panel" class="panel stats-panel">
+        <div class="panel-heading compact">
+          <div>
+            <p class="section-kicker">Aggregate</p>
+            <h2>Final score summary</h2>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th>Seat</th>
+                <th>Mean</th>
+                <th>Median</th>
+                <th>Min</th>
+                <th>Max</th>
+              </tr>
+            </thead>
+            <tbody id="stats-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
