@@ -14,18 +14,22 @@ export const STRATEGIES = {
   always_x: {
     id: "always_x",
     label: "always_x",
+    description: "Always plays X in every round.",
     isStochastic: false,
     decide: () => "X"
   },
   always_y: {
     id: "always_y",
     label: "always_y",
+    description: "Always plays Y in every round.",
     isStochastic: false,
     decide: () => "Y"
   },
   cooperative_tit_for_tat: {
     id: "cooperative_tit_for_tat",
     label: "cooperative_tit_for_tat",
+    description:
+      "Starts with Y, then copies the majority choice made by the other three seats in the previous round.",
     isStochastic: false,
     decide: (gameState) => {
       const previousRound = getPreviousRound(gameState);
@@ -39,6 +43,8 @@ export const STRATEGIES = {
   tit_for_tat_harsh: {
     id: "tit_for_tat_harsh",
     label: "tit_for_tat_harsh",
+    description:
+      "Starts with Y, then plays X if any other seat played X in the previous round; otherwise plays Y.",
     isStochastic: false,
     decide: (gameState) => {
       const previousRound = getPreviousRound(gameState);
@@ -52,12 +58,15 @@ export const STRATEGIES = {
   endgame_defector: {
     id: "endgame_defector",
     label: "endgame_defector",
+    description: "Plays Y through round 7, then switches to X for rounds 8, 9, and 10.",
     isStochastic: false,
     decide: (gameState) => (gameState.roundNumber >= 8 ? "X" : "Y")
   },
   behind_switch_x: {
     id: "behind_switch_x",
     label: "behind_switch_x",
+    description:
+      "Plays Y when tied for first or ahead, but switches to X whenever it is behind the current leader on cumulative score.",
     isStochastic: false,
     decide: (gameState) => {
       const currentScore = gameState.cumulativeScoresBySeat[gameState.actingSeat];
@@ -69,6 +78,8 @@ export const STRATEGIES = {
   grim_trigger: {
     id: "grim_trigger",
     label: "grim_trigger",
+    description:
+      "Starts with Y; once any other seat has ever played X, it plays X for the rest of the game.",
     isStochastic: false,
     decide: (gameState) => {
       const triggered = gameState.roundHistory.some((round) =>
@@ -81,15 +92,17 @@ export const STRATEGIES = {
   random: {
     id: "random",
     label: "random",
+    description: "Randomly chooses X or Y each round with a 50/50 split.",
     isStochastic: true,
     decide: (_gameState, random = Math.random) => (random() < 0.5 ? "X" : "Y")
   }
 };
 
 export function getStrategyList() {
-  return Object.values(STRATEGIES).map(({ id, label, isStochastic }) => ({
+  return Object.values(STRATEGIES).map(({ id, label, description, isStochastic }) => ({
     id,
     label,
+    description,
     isStochastic
   }));
 }

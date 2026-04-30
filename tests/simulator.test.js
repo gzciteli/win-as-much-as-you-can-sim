@@ -5,6 +5,7 @@ import {
   ROUND_MULTIPLIERS,
   STRATEGIES,
   anyStrategyIsStochastic,
+  getStrategyList,
   resolveRoundPayoffs,
   simulateGame,
   simulateTrials
@@ -133,6 +134,16 @@ test("stochastic strategy detection works", () => {
     }),
     true
   );
+});
+
+test("strategy list includes plain-language descriptions", () => {
+  const strategyList = getStrategyList();
+  const cooperative = strategyList.find((strategy) => strategy.id === "cooperative_tit_for_tat");
+  const random = strategyList.find((strategy) => strategy.id === "random");
+
+  assert.equal(typeof cooperative?.description, "string");
+  assert.equal(cooperative.description.includes("Starts with Y"), true);
+  assert.equal(random.description, "Randomly chooses X or Y each round with a 50/50 split.");
 });
 
 test("cooperative_tit_for_tat starts with Y and follows the previous-round majority", () => {

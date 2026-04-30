@@ -2,6 +2,7 @@ import {
   SEATS,
   STRATEGIES,
   anyStrategyIsStochastic,
+  getStrategyList,
   simulateGame,
   simulateTrials
 } from "./simulator.js";
@@ -17,9 +18,13 @@ const statsPanel = document.querySelector("#stats-panel");
 const statsBody = document.querySelector("#stats-body");
 const validationMessage = document.querySelector("#validation-message");
 const runStatus = document.querySelector("#run-status");
+const strategyInfoSelect = document.querySelector("#strategy-info-select");
+const strategyInfoName = document.querySelector("#strategy-info-name");
+const strategyInfoText = document.querySelector("#strategy-info-text");
 let runStatusTimer = null;
 
 wireEvents();
+renderStrategyInfo();
 runSimulation();
 
 function wireEvents() {
@@ -27,6 +32,7 @@ function wireEvents() {
     input.addEventListener("change", updateTrialsVisibility);
   }
 
+  strategyInfoSelect.addEventListener("change", renderStrategyInfo);
   runButton.addEventListener("click", () => {
     runSimulation();
   });
@@ -37,6 +43,21 @@ function updateTrialsVisibility() {
   const strategyIdsBySeat = readStrategySelection();
   const shouldShowTrials = anyStrategyIsStochastic(strategyIdsBySeat);
   trialsControl.hidden = !shouldShowTrials;
+}
+
+function renderStrategyInfo() {
+  const strategy = getStrategyList().find(
+    (item) => item.id === strategyInfoSelect.value
+  );
+
+  if (!strategy) {
+    strategyInfoName.textContent = "Unknown strategy";
+    strategyInfoText.textContent = "No description is available for that strategy.";
+    return;
+  }
+
+  strategyInfoName.textContent = strategy.label;
+  strategyInfoText.textContent = strategy.description;
 }
 
 async function runSimulation() {

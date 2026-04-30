@@ -19,6 +19,37 @@
         </p>
       </section>
 
+      <section class="panel info-panel">
+        <div class="panel-heading compact">
+          <div>
+            <p class="section-kicker">Strategy Guide</p>
+            <h2>See the plain-English rule for any strategy</h2>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <label class="control">
+            <span>Strategy</span>
+            <select id="strategy-info-select">
+              <option value="always_x" selected>always_x</option>
+              <option value="always_y">always_y</option>
+              <option value="cooperative_tit_for_tat">cooperative_tit_for_tat</option>
+              <option value="tit_for_tat_harsh">tit_for_tat_harsh</option>
+              <option value="endgame_defector">endgame_defector</option>
+              <option value="behind_switch_x">behind_switch_x</option>
+              <option value="grim_trigger">grim_trigger</option>
+              <option value="random">random</option>
+            </select>
+          </label>
+          <div class="strategy-card">
+            <p id="strategy-info-name" class="strategy-card-name">always_x</p>
+            <p id="strategy-info-text" class="strategy-card-text">
+              Always plays X in every round.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section class="panel controls-panel">
         <div class="panel-heading">
           <div>

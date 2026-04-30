@@ -131,6 +131,33 @@ h1 {
   align-items: start;
 }
 
+.info-grid {
+  display: grid;
+  grid-template-columns: minmax(15rem, 20rem) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.strategy-card {
+  min-height: 100%;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(143, 101, 64, 0.18);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(243, 223, 206, 0.55), rgba(255, 253, 249, 0.96));
+}
+
+.strategy-card-name {
+  margin: 0 0 0.55rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.strategy-card-text {
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
 .control {
   display: flex;
   flex-direction: column;
@@ -254,6 +281,10 @@ tbody tr:last-child td {
 }
 
 @media (max-width: 840px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
   .controls-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
