@@ -29,7 +29,7 @@ runSimulation();
 
 function wireEvents() {
   for (const input of Object.values(seatInputs)) {
-    input.addEventListener("change", updateTrialsVisibility);
+    input.addEventListener("change", handleSeatStrategyChange);
   }
 
   strategyInfoSelect.addEventListener("change", renderStrategyInfo);
@@ -43,6 +43,12 @@ function updateTrialsVisibility() {
   const strategyIdsBySeat = readStrategySelection();
   const shouldShowTrials = anyStrategyIsStochastic(strategyIdsBySeat);
   trialsControl.hidden = !shouldShowTrials;
+}
+
+function handleSeatStrategyChange(event) {
+  updateTrialsVisibility();
+  strategyInfoSelect.value = event.target.value;
+  renderStrategyInfo();
 }
 
 function renderStrategyInfo() {
