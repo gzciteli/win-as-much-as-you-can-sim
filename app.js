@@ -1,9 +1,7 @@
 import {
-  ROUND_MULTIPLIERS,
   SEATS,
   STRATEGIES,
   anyStrategyIsStochastic,
-  getStrategyList,
   simulateGame,
   simulateTrials
 } from "./simulator.js";
@@ -21,20 +19,8 @@ const validationMessage = document.querySelector("#validation-message");
 const runStatus = document.querySelector("#run-status");
 let runStatusTimer = null;
 
-seedStrategyOptions();
 wireEvents();
 runSimulation();
-
-function seedStrategyOptions() {
-  const optionsMarkup = getStrategyList()
-    .map((strategy) => `<option value="${strategy.id}">${strategy.id}</option>`)
-    .join("");
-
-  for (const [seat, input] of Object.entries(seatInputs)) {
-    input.innerHTML = optionsMarkup;
-    input.value = defaultStrategyForSeat(seat);
-  }
-}
 
 function wireEvents() {
   for (const input of Object.values(seatInputs)) {
@@ -181,16 +167,4 @@ function nextPaint() {
       resolve();
     });
   });
-}
-
-function defaultStrategyForSeat(seat) {
-  if (seat === "A") {
-    return "always_x";
-  }
-
-  if (seat === "C") {
-    return "random";
-  }
-
-  return "always_y";
 }
