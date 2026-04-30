@@ -19,6 +19,8 @@ const resultsBody = document.querySelector("#results-body");
 const statsPanel = document.querySelector("#stats-panel");
 const statsBody = document.querySelector("#stats-body");
 const validationMessage = document.querySelector("#validation-message");
+const runStatus = document.querySelector("#run-status");
+let runStatusTimer = null;
 
 seedStrategyOptions();
 wireEvents();
@@ -40,7 +42,9 @@ function wireEvents() {
     input.addEventListener("input", updateTrialsVisibility);
   }
 
-  runButton.addEventListener("click", runSimulation);
+  runButton.addEventListener("click", () => {
+    runSimulation();
+  });
   updateTrialsVisibility();
 }
 
@@ -50,7 +54,7 @@ function updateTrialsVisibility() {
   trialsControl.hidden = !shouldShowTrials;
 }
 
-function runSimulation() {
+async function runSimulation() {
   const strategyIdsBySeat = readStrategySelection();
   const invalidSeat = SEATS.find((seat) => !STRATEGIES[strategyIdsBySeat[seat]]);
 
@@ -65,16 +69,26 @@ function runSimulation() {
   const requestedTrials = normalizeTrialCount(trialsInput.value);
   const effectiveTrials = stochastic ? requestedTrials : 1;
 
-  if (stochastic) {
-    const trialSet = simulateTrials(strategyIdsBySeat, effectiveTrials);
-    renderResultsTable(trialSet.representativeRun);
-    renderStats(trialSet.summaryBySeat, effectiveTrials);
-    return;
-  }
+  setRunStatus("Running...", "running");
+  runButton.disabled = true;
+  await nextPaint();
 
-  const run = simulateGame(strategyIdsBySeat);
-  renderResultsTable(run);
-  hideStats();
+  try {
+    if (stochastic) {
+      const trialSet = simulateTrials(strategyIdsBySeat, effectiveTrials);
+      renderResultsTable(trialSet.representativeRun);
+      renderStats(trialSet.summaryBySeat, effectiveTrials);
+      showCompletionStatus(`Simulation complete: ${effectiveTrials} trials.`);
+      return;
+    }
+
+    const run = simulateGame(strategyIdsBySeat);
+    renderResultsTable(run);
+    hideStats();
+    showCompletionStatus("Simulation complete.");
+  } finally {
+    runButton.disabled = false;
+  }
 }
 
 function readStrategySelection() {
@@ -124,6 +138,7 @@ function renderStats(summaryBySeat, trialCount) {
       <td>${formatNumber(summary.median)}</td>
       <td>${formatScore(summary.min)}</td>
       <td>${formatScore(summary.max)}</td>
+      <td>${summary.wins}</td>
     </tr>`;
   }).join("");
 }
@@ -139,4 +154,32 @@ function formatScore(value) {
 
 function formatNumber(value) {
   return Number.isInteger(value) ? `${value}` : value.toFixed(2);
+}
+
+function setRunStatus(message, mode) {
+  clearTimeout(runStatusTimer);
+  runStatusTimer = null;
+  runStatus.textContent = message;
+  runStatus.hidden = false;
+  runStatus.classList.add("visible");
+  runStatus.classList.toggle("success", mode === "success");
+}
+
+function showCompletionStatus(message) {
+  setRunStatus(message, "success");
+  runStatusTimer = setTimeout(() => {
+    runStatus.classList.remove("visible");
+    setTimeout(() => {
+      runStatus.hidden = true;
+      runStatus.classList.remove("success");
+    }, 180);
+  }, 2500);
+}
+
+function nextPaint() {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      resolve();
+    });
+  });
 }

@@ -23,6 +23,61 @@ export const STRATEGIES = {
     isStochastic: false,
     decide: () => "Y"
   },
+  cooperative_tit_for_tat: {
+    id: "cooperative_tit_for_tat",
+    label: "cooperative_tit_for_tat",
+    isStochastic: false,
+    decide: (gameState) => {
+      const previousRound = getPreviousRound(gameState);
+      if (!previousRound) {
+        return "Y";
+      }
+
+      return majorityChoiceOfOtherSeats(gameState.actingSeat, previousRound);
+    }
+  },
+  tit_for_tat_harsh: {
+    id: "tit_for_tat_harsh",
+    label: "tit_for_tat_harsh",
+    isStochastic: false,
+    decide: (gameState) => {
+      const previousRound = getPreviousRound(gameState);
+      if (!previousRound) {
+        return "Y";
+      }
+
+      return otherSeatsPlayedChoice(gameState.actingSeat, previousRound, "X") ? "X" : "Y";
+    }
+  },
+  endgame_defector: {
+    id: "endgame_defector",
+    label: "endgame_defector",
+    isStochastic: false,
+    decide: (gameState) => (gameState.roundNumber >= 8 ? "X" : "Y")
+  },
+  behind_switch_x: {
+    id: "behind_switch_x",
+    label: "behind_switch_x",
+    isStochastic: false,
+    decide: (gameState) => {
+      const currentScore = gameState.cumulativeScoresBySeat[gameState.actingSeat];
+      const topScore = Math.max(...Object.values(gameState.cumulativeScoresBySeat));
+
+      return currentScore < topScore ? "X" : "Y";
+    }
+  },
+  grim_trigger: {
+    id: "grim_trigger",
+    label: "grim_trigger",
+    isStochastic: false,
+    decide: (gameState) => {
+      const triggered = gameState.roundHistory.some((round) =>
+        otherSeatsPlayedChoice(gameState.actingSeat, round, "X")
+      );
+
+      return triggered ? "X" : "Y";
+    }
+  },
   random: {
     id: "random",
     label: "random",
@@ -123,6 +178,8 @@ export function simulateTrials(strategyIdsBySeat, trialCount, options = {}) {
 }
 
 export function summarizeRuns(runs) {
+  const winsBySeat = countWinsBySeat(runs);
+
   return Object.fromEntries(
     SEATS.map((seat) => {
       const scores = runs
@@ -136,7 +193,8 @@ export function summarizeRuns(runs) {
           mean: sum / scores.length,
           median: median(scores),
           min: scores[0],
-          max: scores[scores.length - 1]
+          max: scores[scores.length - 1],
+          wins: winsBySeat[seat]
         }
       ];
     })
@@ -149,6 +207,24 @@ export function anyStrategyIsStochastic(strategyIdsBySeat) {
   );
 }
 
+function getPreviousRound(gameState) {
+  return gameState.roundHistory[gameState.roundHistory.length - 1];
+}
+
+function majorityChoiceOfOtherSeats(actingSeat, round) {
+  const otherChoices = SEATS.filter((seat) => seat !== actingSeat).map(
+    (seat) => round.choicesBySeat[seat]
+  );
+  const xCount = otherChoices.filter((choice) => choice === "X").length;
+  return xCount >= 2 ? "X" : "Y";
+}
+
+function otherSeatsPlayedChoice(actingSeat, round, choiceToFind) {
+  return SEATS.some(
+    (seat) => seat !== actingSeat && round.choicesBySeat[seat] === choiceToFind
+  );
+}
+
 function median(sortedValues) {
   const middle = Math.floor(sortedValues.length / 2);
 
@@ -157,4 +233,20 @@ function median(sortedValues) {
   }
 
   return sortedValues[middle];
+}
+
+function countWinsBySeat(runs) {
+  const winsBySeat = Object.fromEntries(SEATS.map((seat) => [seat, 0]));
+
+  for (const run of runs) {
+    const topScore = Math.max(...SEATS.map((seat) => run.finalScores[seat]));
+
+    for (const seat of SEATS) {
+      if (run.finalScores[seat] === topScore) {
+        winsBySeat[seat] += 1;
+      }
+    }
+  }
+
+  return winsBySeat;
 }

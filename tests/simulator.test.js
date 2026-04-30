@@ -135,6 +135,144 @@ test("stochastic strategy detection works", () => {
   );
 });
 
+test("cooperative_tit_for_tat starts with Y and follows the previous-round majority", () => {
+  assert.equal(
+    STRATEGIES.cooperative_tit_for_tat.decide({
+      actingSeat: "A",
+      roundHistory: []
+    }),
+    "Y"
+  );
+
+  assert.equal(
+    STRATEGIES.cooperative_tit_for_tat.decide({
+      actingSeat: "A",
+      roundHistory: [
+        {
+          choicesBySeat: {
+            A: "Y",
+            B: "X",
+            C: "X",
+            D: "Y"
+          }
+        }
+      ]
+    }),
+    "X"
+  );
+
+  assert.equal(
+    STRATEGIES.cooperative_tit_for_tat.decide({
+      actingSeat: "A",
+      roundHistory: [
+        {
+          choicesBySeat: {
+            A: "X",
+            B: "Y",
+            C: "Y",
+            D: "X"
+          }
+        }
+      ]
+    }),
+    "Y"
+  );
+});
+
+test("tit_for_tat_harsh, grim_trigger, and endgame_defector follow their trigger rules", () => {
+  assert.equal(
+    STRATEGIES.tit_for_tat_harsh.decide({
+      actingSeat: "A",
+      roundHistory: []
+    }),
+    "Y"
+  );
+
+  assert.equal(
+    STRATEGIES.tit_for_tat_harsh.decide({
+      actingSeat: "A",
+      roundHistory: [
+        {
+          choicesBySeat: {
+            A: "Y",
+            B: "Y",
+            C: "X",
+            D: "Y"
+          }
+        }
+      ]
+    }),
+    "X"
+  );
+
+  assert.equal(
+    STRATEGIES.grim_trigger.decide({
+      actingSeat: "A",
+      roundHistory: [
+        {
+          choicesBySeat: {
+            A: "Y",
+            B: "Y",
+            C: "Y",
+            D: "Y"
+          }
+        },
+        {
+          choicesBySeat: {
+            A: "Y",
+            B: "Y",
+            C: "X",
+            D: "Y"
+          }
+        }
+      ]
+    }),
+    "X"
+  );
+
+  assert.equal(
+    STRATEGIES.endgame_defector.decide({
+      roundNumber: 7
+    }),
+    "Y"
+  );
+
+  assert.equal(
+    STRATEGIES.endgame_defector.decide({
+      roundNumber: 8
+    }),
+    "X"
+  );
+});
+
+test("behind_switch_x defects only when behind the current leader", () => {
+  assert.equal(
+    STRATEGIES.behind_switch_x.decide({
+      actingSeat: "A",
+      cumulativeScoresBySeat: {
+        A: 4,
+        B: 4,
+        C: 2,
+        D: 1
+      }
+    }),
+    "Y"
+  );
+
+  assert.equal(
+    STRATEGIES.behind_switch_x.decide({
+      actingSeat: "A",
+      cumulativeScoresBySeat: {
+        A: 3,
+        B: 5,
+        C: 3,
+        D: 1
+      }
+    }),
+    "X"
+  );
+});
+
 test("trial summaries compute mean, median, min, and max", () => {
   const draws = [...Array(40).fill(0.1), ...Array(40).fill(0.9)];
   let index = 0;
@@ -160,4 +298,8 @@ test("trial summaries compute mean, median, min, and max", () => {
   assert.equal(trialSet.summaryBySeat.A.median, 0);
   assert.equal(trialSet.summaryBySeat.A.min, -25);
   assert.equal(trialSet.summaryBySeat.A.max, 25);
+  assert.equal(trialSet.summaryBySeat.A.wins, 2);
+  assert.equal(trialSet.summaryBySeat.B.wins, 2);
+  assert.equal(trialSet.summaryBySeat.C.wins, 2);
+  assert.equal(trialSet.summaryBySeat.D.wins, 2);
 });

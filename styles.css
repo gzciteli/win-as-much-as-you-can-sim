@@ -27,6 +27,33 @@ body {
     linear-gradient(180deg, #fbf7f0 0%, var(--bg) 58%, #efe2cf 100%);
 }
 
+.run-status {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  min-width: 12rem;
+  max-width: min(22rem, calc(100% - 2rem));
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  background: rgba(29, 36, 51, 0.94);
+  color: #fffaf4;
+  box-shadow: 0 16px 36px rgba(29, 36, 51, 0.28);
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.run-status.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.run-status.success {
+  background: rgba(45, 106, 79, 0.94);
+}
+
 .shell {
   width: min(1120px, calc(100% - 2rem));
   margin: 0 auto;
@@ -235,6 +262,12 @@ tbody tr:last-child td {
 }
 
 @media (max-width: 580px) {
+  .run-status {
+    left: 0.5rem;
+    right: 0.5rem;
+    max-width: none;
+  }
+
   .shell {
     width: min(100% - 1rem, 1120px);
     padding-top: 1rem;
