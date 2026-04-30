@@ -141,7 +141,8 @@ h1 {
   font-weight: 700;
 }
 
-.control input {
+.control input,
+.control select {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -151,7 +152,8 @@ h1 {
   color: var(--ink);
 }
 
-.control input:focus {
+.control input:focus,
+.control select:focus {
   outline: 2px solid rgba(184, 92, 56, 0.35);
   border-color: var(--accent);
 }

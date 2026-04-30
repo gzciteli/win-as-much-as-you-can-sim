@@ -33,39 +33,19 @@
         <div class="controls-grid">
           <label class="control seat-a">
             <span>Seat A (Primary)</span>
-            <input
-              id="seat-A"
-              list="strategy-options"
-              autocomplete="off"
-              value="always_x"
-            />
+            <select id="seat-A"></select>
           </label>
           <label class="control seat-divider">
             <span>Seat B</span>
-            <input
-              id="seat-B"
-              list="strategy-options"
-              autocomplete="off"
-              value="always_y"
-            />
+            <select id="seat-B"></select>
           </label>
           <label class="control">
             <span>Seat C</span>
-            <input
-              id="seat-C"
-              list="strategy-options"
-              autocomplete="off"
-              value="random"
-            />
+            <select id="seat-C"></select>
           </label>
           <label class="control">
             <span>Seat D</span>
-            <input
-              id="seat-D"
-              list="strategy-options"
-              autocomplete="off"
-              value="always_y"
-            />
+            <select id="seat-D"></select>
           </label>
           <label id="trials-control" class="control trials-control">
             <span>Trials</span>
@@ -80,8 +60,6 @@
             <small>Used when any selected strategy is stochastic.</small>
           </label>
         </div>
-
-        <datalist id="strategy-options"></datalist>
         <p id="validation-message" class="validation-message" aria-live="polite"></p>
       </section>
 

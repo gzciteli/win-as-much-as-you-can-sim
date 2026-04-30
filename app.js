@@ -11,7 +11,6 @@ import {
 const seatInputs = Object.fromEntries(
   SEATS.map((seat) => [seat, document.querySelector(`#seat-${seat}`)])
 );
-const datalist = document.querySelector("#strategy-options");
 const trialsControl = document.querySelector("#trials-control");
 const trialsInput = document.querySelector("#trials");
 const runButton = document.querySelector("#run-simulation");
@@ -27,19 +26,19 @@ wireEvents();
 runSimulation();
 
 function seedStrategyOptions() {
-  datalist.innerHTML = getStrategyList()
-    .map(
-      (strategy) =>
-        `<option value="${strategy.id}">${strategy.id}${
-          strategy.isStochastic ? " (stochastic)" : ""
-        }</option>`
-    )
+  const optionsMarkup = getStrategyList()
+    .map((strategy) => `<option value="${strategy.id}">${strategy.id}</option>`)
     .join("");
+
+  for (const [seat, input] of Object.entries(seatInputs)) {
+    input.innerHTML = optionsMarkup;
+    input.value = defaultStrategyForSeat(seat);
+  }
 }
 
 function wireEvents() {
   for (const input of Object.values(seatInputs)) {
-    input.addEventListener("input", updateTrialsVisibility);
+    input.addEventListener("change", updateTrialsVisibility);
   }
 
   runButton.addEventListener("click", () => {
@@ -93,7 +92,7 @@ async function runSimulation() {
 
 function readStrategySelection() {
   return Object.fromEntries(
-    SEATS.map((seat) => [seat, seatInputs[seat].value.trim().toLowerCase()])
+    SEATS.map((seat) => [seat, seatInputs[seat].value])
   );
 }
 
@@ -182,4 +181,16 @@ function nextPaint() {
       resolve();
     });
   });
+}
+
+function defaultStrategyForSeat(seat) {
+  if (seat === "A") {
+    return "always_x";
+  }
+
+  if (seat === "C") {
+    return "random";
+  }
+
+  return "always_y";
 }
